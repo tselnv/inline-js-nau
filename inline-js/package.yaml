@@ -31,3 +31,6 @@ library:
     - Paths_inline_js
   exposed-modules:
     - Language.JavaScript.Inline
+    - Language.JavaScript.Inline.Aeson
+    - Language.JavaScript.Inline.JSParse
+    - Language.JavaScript.Inline.TH

@@ -4,7 +4,7 @@ cabal-version: 2.2
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 755f7c7fce00c52a8364a8aa480871885a8b682da60d815132848b32e0c890df
+-- hash: abb6ff4afce4717e7a44e2c4008e30b75920443ae248a82e1037bdda6eb0c8ca
 
 name:           inline-js-core
 version:        0.0.1.0
@@ -31,20 +31,21 @@ source-repository head
 library
   exposed-modules:
       Language.JavaScript.Inline.Core
-  other-modules:
       Language.JavaScript.Inline.Core.Class
-      Language.JavaScript.Inline.Core.Dict
       Language.JavaScript.Inline.Core.Exception
+      Language.JavaScript.Inline.Core.IPC
+      Language.JavaScript.Inline.Core.Instruction
+      Language.JavaScript.Inline.Core.Message
+      Language.JavaScript.Inline.Core.NodeVersion
+      Language.JavaScript.Inline.Core.Utils
+      Language.JavaScript.Inline.Core.Dict
       Language.JavaScript.Inline.Core.Export
       Language.JavaScript.Inline.Core.Import
-      Language.JavaScript.Inline.Core.Instruction
-      Language.JavaScript.Inline.Core.IPC
       Language.JavaScript.Inline.Core.JSVal
-      Language.JavaScript.Inline.Core.Message
       Language.JavaScript.Inline.Core.NodePath
-      Language.JavaScript.Inline.Core.NodeVersion
+      Language.JavaScript.Inline.Core.Sessio
+  other-modules:
       Language.JavaScript.Inline.Core.Session
-      Language.JavaScript.Inline.Core.Utils
       Paths_inline_js_core
   autogen-modules:
       Paths_inline_js_core

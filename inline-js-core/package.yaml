@@ -36,3 +36,16 @@ library:
     - Paths_inline_js_core
   exposed-modules:
     - Language.JavaScript.Inline.Core
+    - Language.JavaScript.Inline.Core.Class
+    - Language.JavaScript.Inline.Core.Exception
+    - Language.JavaScript.Inline.Core.IPC
+    - Language.JavaScript.Inline.Core.Instruction
+    - Language.JavaScript.Inline.Core.Message
+    - Language.JavaScript.Inline.Core.NodeVersion
+    - Language.JavaScript.Inline.Core.Utils
+    - Language.JavaScript.Inline.Core.Dict
+    - Language.JavaScript.Inline.Core.Export
+    - Language.JavaScript.Inline.Core.Import
+    - Language.JavaScript.Inline.Core.JSVal
+    - Language.JavaScript.Inline.Core.NodePath
+    - Language.JavaScript.Inline.Core.Sessio
