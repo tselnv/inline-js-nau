@@ -48,4 +48,4 @@ library:
     - Language.JavaScript.Inline.Core.Import
     - Language.JavaScript.Inline.Core.JSVal
     - Language.JavaScript.Inline.Core.NodePath
-    - Language.JavaScript.Inline.Core.Sessio
+    - Language.JavaScript.Inline.Core.Session
