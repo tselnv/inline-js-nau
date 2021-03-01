@@ -28,6 +28,7 @@ import Language.JavaScript.Inline.Core.Utils
 import System.Directory
 import System.Environment.Blank
 import System.FilePath
+import System.IO (Handle)
 import System.Process
 
 -- $session-todos
@@ -83,7 +84,8 @@ data Session = Session
     -- | Terminate the @node@ process immediately. Use this to close the
     -- 'Session' if @node@ doesn't need to run any more. Blocks until @node@
     -- process exits.
-    killSession :: IO ()
+    killSession :: IO (),
+    output :: Handle
   }
 
 instance Show Session where
@@ -191,7 +193,8 @@ newSession Config {..} = do
             { ipc = _ipc,
               fatalErrorInbox = _err_inbox,
               closeSession = session_close,
-              killSession = session_kill
+              killSession = session_kill,
+              output = _rh
             }
     pure _session
 
@@ -203,3 +206,6 @@ sessionSend Session {..} msg = send ipc $ toLazyByteString $ messageHSPut msg
 -- freeing the 'Session' to reduce the likelihood of use-after-free errors.
 withSession :: Config -> (Session -> IO r) -> IO r
 withSession c m = bracket (newSession c) killSession (evaluate <=< m)
+
+getNodeOut :: Session -> Handle
+getNodeOut Session {..} = output
