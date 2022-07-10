@@ -26,3 +26,11 @@ data SessionClosed
   deriving (Show)
 
 instance Exception SessionClosed
+
+newtype InlineJSException = InlineJSException 
+  { inlineJSExceptionMessage :: String
+  }
+  deriving (Show)
+
+instance Exception InlineJSException
+

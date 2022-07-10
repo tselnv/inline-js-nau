@@ -6,6 +6,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Language.JavaScript.Inline.Core.Session where
 
@@ -30,6 +31,13 @@ import System.Environment.Blank
 import System.FilePath
 import System.IO (Handle)
 import System.Process
+import Control.Monad.Trans.Resource
+import qualified Control.Monad.Trans.Resource as Res
+import Control.Monad.Trans.Class
+import Control.Monad.IO.Class (MonadIO, liftIO)
+import Control.Monad.Trans.Control (MonadBaseControl)
+
+
 
 -- $session-todos
 --
@@ -127,7 +135,9 @@ newSession Config {..} = do
             JSEvalResponse {..} -> do
               let _sp = word64ToStablePtr jsEvalResponseId
               _inbox <- deRefStablePtr _sp
-              atomically $ putTMVar _inbox jsEvalResponseContent
+              case jsEvalResponseContent of
+                Left err -> atomically $ putTMVar _err_inbox $ Left $ toException $ InlineJSException $ show err
+                Right _ -> atomically $ putTMVar _inbox jsEvalResponseContent
             HSEvalRequest {..} -> do
               _ <-
                 forkFinally
@@ -205,7 +215,15 @@ sessionSend Session {..} msg = send ipc $ toLazyByteString $ messageHSPut msg
 -- the 'Session' with 'killSession'. The return value is forced to WHNF before
 -- freeing the 'Session' to reduce the likelihood of use-after-free errors.
 withSession :: Config -> (Session -> IO r) -> IO r
-withSession c m = bracket (newSession c) killSession (evaluate <=< m)
+withSession c m = liftIO $ bracket' (newSession c) killSession (evaluate <=< m)
+
+bracket' ::
+  (MonadThrow m, MonadBaseControl IO m,
+   MonadIO m, MonadUnliftIO m) =>
+  IO t -> (t -> IO ()) -> (t -> m a) -> m a
+bracket' alloc free inside = runResourceT $ do
+  (releaseKey, resource) <- allocate alloc free
+  lift $ inside resource
 
 getNodeOut :: Session -> Handle
 getNodeOut Session {..} = output

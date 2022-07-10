@@ -1,29 +1,26 @@
 { sources ? import ./nix/sources.nix { }
 , haskellNix ? import sources.haskell-nix { }
-, nixpkgsSrc ? haskellNix.sources.nixpkgs-2009
-, nixpkgsArgs ? haskellNix.nixpkgsArgs
-, pkgs ? import nixpkgsSrc nixpkgsArgs
-, ghc ? "ghc8102"
-, node ? "nodejs-14_x"
-, hsPkgs ? import ./default.nix { inherit pkgs ghc node; }
-}: hsPkgs.shellFor {
-  packages = ps: with ps; [
-    inline-js
-    inline-js-core
-    inline-js-examples
-    inline-js-tests
-  ];
+, pkgs ? import sources.nixpkgs haskellNix.nixpkgsArgs
+, ghc ? "ghc8107"
+, node ? "nodejs_latest"
+, hsPkgs ? import ./nix/pkg-set.nix { inherit pkgs ghc node; }
+}:
+hsPkgs.shellFor {
+  packages = ps:
+    with ps; [
+      inline-js
+      inline-js-core
+      inline-js-examples
+      inline-js-tests
+    ];
 
   withHoogle = true;
 
-  buildInputs = with pkgs.haskellPackages; [
-    brittany
-    cabal-install
-    ghcid
-    hlint
-    pkgs."${node}"
-    (import sources.ormolu {}).ormolu
-  ];
+  nativeBuildInputs =
+    pkgs.lib.attrValues (import sources.hs-nix-tools { inherit ghc; })
+    ++ [ pkgs."${node}" pkgs.util-linux ];
 
   exactDeps = true;
+
+  shellHook = "taskset -pc 0-1000 $$";
 }

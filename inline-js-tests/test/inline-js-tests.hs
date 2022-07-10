@@ -121,7 +121,29 @@ main = do
                   |]
               js_content <- lazyStream s js_stream
               hs_content <- LBS.readFile p
-              js_content @?= hs_content
+              js_content @?= hs_content,
+        testCase "Segmenatation Fault Check - 1" $ do 
+          result <- withDefaultSession $ \s -> do
+            r <- error "Error message"
+            pure (r :: I)
+          evaluate result
+          pure (),
+        
+        testCase "Segmenatation Fault Check - 2" $ do 
+          result <- withDefaultSession $ \s -> do
+            let x = I (div 1 0)
+            r <- eval s [js| $x |]
+            pure (r :: I)
+          evaluate result
+          pure (),
+
+        testCase "Segmenatation Fault Check - 3" $ do 
+          result <- withDefaultSession $ \s -> do
+            let x = I (head ([] :: [Int]))
+            r <- eval s [js| $x |]
+            pure (r :: I)
+          evaluate result
+          pure ()
       ]
 
 newtype I = I Int
